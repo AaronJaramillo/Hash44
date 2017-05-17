@@ -61,10 +61,13 @@ public:
 	void setCoin(int coin_type)
 	{
 		coin = purpose44Key.derive_private(coin_type);
+		//to-do scan accounts
+		set_account(0);
+
 	}
 	void set_account(int account_num)
 	{
-		account = coin.derive_private(account_num)
+		account = coin.derive_private(account_num);
 	}
 	//display output
 	void dumpKeys()
@@ -155,28 +158,30 @@ public:
 	}
 
 	//accesor
-	wallet::hd_private childPrivateKey(int index)
+	wallet::ec_secret childsecretKey(int index)
 	{
-		return purpose44Key.derive_private(index);
+		return account.derive_private(0).derive_private(index).secret();
 	}
 
-	wallet::hd_public childPublicKey(int index)
+	wallet::ec_public childPublicKey(int index)
 	{
-		return publicKey.derive_public(index);
+		return publicKey.derive_public(0).derive_public(index).point();
 	}
 
 	wallet::payment_address childAddress(int index)
 	{
-		return wallet::payment_address(wallet::ec_public(childPublicKey(index).point()), 0x6f);
+		return wallet::payment_address((childPublicKey(index).point()), prefix);
 	}
 
 private:
 	//members
 	data_chunk entropy;
 	data_chunk seed;
+	uint8_t prefix = 0xc4;
 	wallet::word_list mnemonic;
 	wallet::hd_private purpose44Key;
 	wallet::hd_private coin;
+	wallet::hd_private account; 
 	wallet::hd_public publicKey;
 
 
