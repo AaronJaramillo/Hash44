@@ -17,8 +17,8 @@ public:
 		pseudo_random_fill(entropy);
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
-		purpose44Key. = wallet::hd_private(seed).derive_private(44);
-		publicKey = purpose44Key.to_public();
+		purpose44Key = wallet::hd_private(seed).derive_private(44);
+
 	}
 
 	HD_Wallet(const data_chunk Userentropy)
@@ -27,7 +27,6 @@ public:
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		publicKey = purpose44Key.to_public();
 	}
 
 	HD_Wallet(const data_chunk Userentropy, int coin_type)
@@ -36,7 +35,6 @@ public:
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		publicKey = purpose44Key.to_public();
 		setCoin(coin_type);
 	}
 
@@ -46,15 +44,13 @@ public:
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		publicKey = purpose44Key.to_public();
 	}
-	HD_Wallet(const string mnemonicSeed, int coin_type)
+	HD_Wallet(const std::string mnemonicSeed, int coin_type)
 	{
 		mnemonic = split(mnemonicSeed);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		publicKey = purpose44Key.to_public();
 		setCoin(coin_type);
 	}
 
@@ -73,14 +69,14 @@ public:
 	void dumpKeys()
 	{
 		displayMnemonic();
-		displayPrivateKey();
-		displayChildPrivateKey(1);
+		displayMasterKey();
+		displayChildSecretKey(1);
 		displayAddress(1);
 
 	}
-	void displayPrivateKey()
+	void displayMasterKey()
 	{
-		std::cout << "\nPrivate Key:" << purpose44Key.encoded() << std::endl;
+		std::cout << "\nMaster Private Key: " << wallet::hd_private(seed).encoded() << std::endl;
 	}
 
 	void displayMnemonic()
@@ -94,9 +90,14 @@ public:
 		}
 	}
 
-	void displayChildPrivateKey(int index)
+	void displayChildSecretKey(int index)
 	{
-		std::cout << "\nChild Key: " << childPrivateKey(index).encoded() << std::endl;
+		std::cout << "\nChild Key: " << encode_base16(childsecretKey(index)) << std::endl;
+	}
+	
+	void displayChildPublicKey(int index)
+	{
+		std::cout << "\nPublic Key: " << childPublicKey(index).encoded() << std::endl;
 	}
 
 	void displayAddress(int index)
@@ -158,14 +159,19 @@ public:
 	}
 
 	//accesor
-	wallet::ec_secret childsecretKey(int index)
+	wallet::hd_private getMasterKey()
+	{
+		return wallet::hd_private(seed);
+	}
+	
+	ec_secret childsecretKey(int index)
 	{
 		return account.derive_private(0).derive_private(index).secret();
 	}
 
 	wallet::ec_public childPublicKey(int index)
 	{
-		return publicKey.derive_public(0).derive_public(index).point();
+		return account.derive_public(0).derive_public(index).point();
 	}
 
 	wallet::payment_address childAddress(int index)
@@ -177,12 +183,11 @@ private:
 	//members
 	data_chunk entropy;
 	data_chunk seed;
-	uint8_t prefix = 0xc4;
+	uint8_t prefix = 0x6f;
 	wallet::word_list mnemonic;
 	wallet::hd_private purpose44Key;
 	wallet::hd_private coin;
-	wallet::hd_private account; 
-	wallet::hd_public publicKey;
+	wallet::hd_private account;
 
 
 };
