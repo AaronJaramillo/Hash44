@@ -4,12 +4,30 @@
 #include <string.h>
 #include <iostream>
 #include <sstream>
+#include <vector>
+
+
 using namespace bc;
+
+struct Prefixes
+{
+	uint32_t bip44_code;
+	uint32_t HDprivate;
+	uint32_t HDpublic;
+	uint32_t P2KH;
+	uint32_t P2SH;
+
+};
 
 class HD_Wallet
 {
 public:
 	
+	Prefixes BTC =  {0, 0x0488ADE4, 0x0488B21E, 0x00, 0x05};
+	Prefixes tBTC = {1, 0x04358394, 0x043587CF, 0x6f, 0xC4};
+	Prefixes LTC =  {2, 0x0488ADE4, 0x0488B21E, 0x30, 0x32};
+	Prefixes tLTC = {1, 0x04358394, 0x04358394, 0x6f, 0xC0};
+
 	//constructor
 	HD_Wallet()
 	{
@@ -18,6 +36,16 @@ public:
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
+
+	}
+	HD_Wallet(Prefixes coin_code)
+	{
+		entropy = data_chunk(16);
+		pseudo_random_fill(entropy);
+		mnemonic = wallet::create_mnemonic(entropy);
+		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
+		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		setCoin(coin_code);
 
 	}
 
@@ -29,7 +57,7 @@ public:
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
 	}
 
-	HD_Wallet(const data_chunk Userentropy, int coin_type)
+	HD_Wallet(const data_chunk Userentropy, Prefixes coin_code)
 	{
 		entropy = Userentropy;
 		mnemonic = wallet::create_mnemonic(entropy);
@@ -45,18 +73,19 @@ public:
 		//seed = to_chunk(hashSeed);
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
 	}
-	HD_Wallet(const std::string mnemonicSeed, int coin_type)
+	HD_Wallet(const std::string mnemonicSeed, Prefixes coin_code)
 	{
 		mnemonic = split(mnemonicSeed);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		setCoin(coin_type);
+		setCoin(coin_code);
 	}
 
-	void setCoin(int coin_type)
+	void setCoin(Prefixes coin_code)
 	{
-		coin = purpose44Key.derive_private(coin_type);
+		coin_type = coin_code;
+		coin = purpose44Key.derive_private(coin_type.bip44_code);
 		//to-do scan accounts
 		set_account(0);
 
@@ -71,7 +100,7 @@ public:
 		displayMnemonic();
 		displayMasterKey();
 		displayChildSecretKey(1);
-		displayAddress(1);
+		displayChildAddress(1);
 
 	}
 	void displayMasterKey()
@@ -92,15 +121,15 @@ public:
 
 	void displayChildSecretKey(int index)
 	{
-		std::cout << "\nChild Key: " << encode_base16(childsecretKey(index)) << std::endl;
+		std::cout << "\n Secret Key: " << encode_base16(childSecretKey(index)) << std::endl;
 	}
-	
+
 	void displayChildPublicKey(int index)
 	{
 		std::cout << "\nPublic Key: " << childPublicKey(index).encoded() << std::endl;
 	}
 
-	void displayAddress(int index)
+	void displayChildAddress(int index)
 	{
 		std::cout << "\nAddress: " << childAddress(index).encoded() << std::endl;
 	}
@@ -108,7 +137,7 @@ public:
 	{
 		while(start != end)
 		{
-			displayAddress(start);
+			displayChildAddress(start);
 			start++;
 		}
 	}
@@ -164,30 +193,34 @@ public:
 		return wallet::hd_private(seed);
 	}
 	
-	ec_secret childsecretKey(int index)
+	ec_secret childSecretKey(int index)
 	{
 		return account.derive_private(0).derive_private(index).secret();
 	}
 
 	wallet::ec_public childPublicKey(int index)
 	{
+	
 		return account.derive_public(0).derive_public(index).point();
 	}
 
 	wallet::payment_address childAddress(int index)
 	{
-		return wallet::payment_address((childPublicKey(index).point()), prefix);
+		return wallet::payment_address((childPublicKey(index).point()), coin_type.P2KH);
 	}
 
 private:
 	//members
 	data_chunk entropy;
 	data_chunk seed;
-	uint8_t prefix = 0x6f;
+	Prefixes coin_type;
 	wallet::word_list mnemonic;
 	wallet::hd_private purpose44Key;
 	wallet::hd_private coin;
 	wallet::hd_private account;
+
+
+
 
 
 };
