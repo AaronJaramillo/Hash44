@@ -12,8 +12,9 @@ void mainMenu()
 	std::cout << "1. Generate New Wallet" << std::endl;
 	std::cout << "2. Import Wallet" << std::endl;
 	std::cout << "3." << " Custom Coin Path" << std::endl;
-	std::cout << "4." << " Display" << std::endl;
-	std::cout << "5." << " Exit" << std::endl;
+	std::cout << "4." << " Change Coin" << std::endl;
+	std::cout << "5." << " Display" << std::endl;
+	std::cout << "6." << " Quit" << std::endl;
 	std::cout << "==========================" << std::endl;
 }
 
@@ -82,7 +83,10 @@ Prefixes matchPrefixTicker(std::string coin)
 	} else if(coin == "tLTC"){
 
 		return HD_Wallet().tLTC;
-	} else {
+	} else if(coin=="POT"){
+		return HD_Wallet().POT;
+	}
+	else {
 		
 		return HD_Wallet().BTC;
 
@@ -92,7 +96,7 @@ Prefixes matchPrefixTicker(std::string coin)
 int main(){
 	HD_Wallet wallet;
 	int choice = 0;
-	while(choice != 5)
+	while(choice != 6)
 	{
 		mainMenu();
 		choice = getInput();
@@ -122,7 +126,7 @@ int main(){
 			int pathIndex = getInput();
 			wallet.setCoin(pathIndex);
 			//printpath
-		} else if (choice == 4)
+		} else if (choice == 5)
 		{	
 			while(choice != 8){
 				displayMenu();
@@ -167,7 +171,11 @@ int main(){
 					std::cout << "Selection Invalid! " << std::endl;
 				}
 			}
-		} else if (choice == 5)
+		} else if (choice == 4)
+		{
+			wallet.setCoinPrefixes(matchPrefixTicker(getCoinTicker()));
+
+		} else if (choice == 6)
 		{
 			std::cout << "Good Bye!" << std::endl;
 		} else {

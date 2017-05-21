@@ -8,7 +8,8 @@
 
 
 using namespace bc;
-
+// Coin  | coin_type’ |    version_WIF   |  version_p2pkh  |  version_p2sh   | version_hd_secret
+// POT   |     81     |        183       |  55/('P')       |   5/('3')  
 struct Prefixes
 {
 	uint32_t bip44_code;
@@ -27,6 +28,7 @@ public:
 	Prefixes tBTC = {1, 0x04358394, 0x043587CF, 0x6f, 0xC4};
 	Prefixes LTC =  {2, 0x0488ADE4, 0x0488B21E, 0x30, 0x32};
 	Prefixes tLTC = {1, 0x04358394, 0x04358394, 0x6f, 0xC0};
+	Prefixes POT =  {81, 0x0488ADE4, 0x0488B21E, 55, 0x05};
 
 	//constructor
 	HD_Wallet()
@@ -126,7 +128,7 @@ public:
 
 	void displayChildSecretKey(int index)
 	{
-		std::cout << "\n Secret Key: " << encode_base16(childSecretKey(index)) << std::endl;
+		std::cout << "\nSecret Key: " << encode_base16(childSecretKey(index)) << std::endl;
 	}
 	// void displayChildWif(int index)
 	// {
