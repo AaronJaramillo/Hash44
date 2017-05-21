@@ -21,8 +21,8 @@ void displayMenu()
 	std::cout << "\n==========================" << std::endl;
 	std::cout << "1. Master Key" << std::endl;
 	// std::cout << "2. Mnemonic" << std::endl;
-	// std::cout << "3. Child Private Key" << std::endl;
-	// std::cout << "4. Payment Address" << std::endl;
+	std::cout << "3. Dump Child Secret Key" << std::endl;
+	std::cout << "4. Payment Address" << std::endl;
 	// std::cout << "5. Address Range" << std::endl; 
 	std::cout << "6. Dump Keys" << std::endl;
 	// std::cout << "7. Check Balance" << std::endl;
@@ -131,15 +131,15 @@ int main(){
 				// {
 				// 	wallet.displayMnemonic();
 
-				// } else if (choice == 3)
-				// {
-				// 	index = getInput();
-				// 	wallet.displayChildPrivateKey(index);
+				} else if (choice == 3)
+				{
+					index = getInput();
+					wallet.displayChildSecretKey(index);
 
-				// } else if (choice == 4)
-				// {
-				// 	index = getInput();
-				// 	wallet.displayAddress(index);
+				} else if (choice == 4)
+				{
+					index = getInput();
+					wallet.displayChildAddress(index);
 				// } else if (choice == 5)
 				// {
 				// 	int start = getInput();
