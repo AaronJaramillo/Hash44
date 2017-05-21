@@ -7,7 +7,7 @@ using namespace bc;
 void genericConstructor()
 {
 	HD_Wallet wallet = HD_Wallet();
-	wallet.setCoin(wallet.BTC);
+	wallet.setCoinPrefixes(wallet.BTC);
 	wallet.dumpKeys();
 }
 void testMnemonic_MasterKey()
@@ -54,6 +54,19 @@ void testCoinConstructor_childKeyDisplay()
 	std::cout << encode_base16(secretKey) << std::endl;
 
 }
+void testCustomCoinPath(int coinPath)
+{
+	HD_Wallet wallet1("label stick flat innocent brother frost rebel aim creek six baby copper need side cannon student announce alpha", HD_Wallet().tBTC);
+	int customCoinPath = coinPath;
+	wallet1.setCoin(coinPath);
+	if(coinPath == wallet1.getCoinPrefixes().bip44_code)
+	{
+		std::cout << "Success: " << std::endl;
+	}
+	std::cout << "Key Path: M / 44 / " << wallet1.getCoinPrefixes().bip44_code << " / 0 / 0 / 0" << std::endl;
+
+
+}
 
 int main()
 {
@@ -61,4 +74,5 @@ int main()
 	testMnemonic_MasterKey();
 	testCoinConstructor_childKeyDisplay();
 	testCoin_address(HD_Wallet().tBTC);
+	testCustomCoinPath(6);
 }

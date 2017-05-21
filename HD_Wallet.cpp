@@ -45,7 +45,7 @@ public:
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		setCoin(coin_code);
+		setCoinPrefixes(coin_code);
 
 	}
 
@@ -63,7 +63,7 @@ public:
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		setCoin(coin_type);
+		setCoinPrefixes(coin_code);
 	}
 
 	HD_Wallet(const std::string mnemonicSeed)
@@ -79,10 +79,14 @@ public:
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
-		setCoin(coin_code);
+		setCoinPrefixes(coin_code);
 	}
-
-	void setCoin(Prefixes coin_code)
+	void setCoin(int bip44coin_code)
+	{
+		coin_type.bip44_code = bip44coin_code;
+		coin = purpose44Key.derive_private(bip44coin_code);
+	}
+	void setCoinPrefixes(Prefixes coin_code)
 	{
 		coin_type = coin_code;
 		coin = purpose44Key.derive_private(coin_type.bip44_code);
@@ -123,6 +127,10 @@ public:
 	{
 		std::cout << "\n Secret Key: " << encode_base16(childSecretKey(index)) << std::endl;
 	}
+	// void displayChildWif(int index)
+	// {
+	// 	std:cout <<"\n WIF: " << childWif(index).encoded() << std::endl;
+	// }
 
 	void displayChildPublicKey(int index)
 	{
@@ -195,8 +203,12 @@ public:
 	
 	ec_secret childSecretKey(int index)
 	{
-		return account.derive_private(0).derive_private(index).secret();
+		return account.derive_private(0).derive_private(index);
 	}
+	// wallet::hd_private childWif(int index)
+	// {
+	// 	return account.derive_private(0).derive_private(index);
+	// }
 
 	wallet::ec_public childPublicKey(int index)
 	{
@@ -209,6 +221,9 @@ public:
 		return wallet::payment_address((childPublicKey(index).point()), coin_type.P2KH);
 	}
 
+	Prefixes getCoinPrefixes(){
+		return coin_type;
+	}
 private:
 	//members
 	data_chunk entropy;
