@@ -11,8 +11,9 @@ void mainMenu()
 	std::cout << "\n==========================" << std::endl;
 	std::cout << "1. Generate New Wallet" << std::endl;
 	std::cout << "2. Import Wallet" << std::endl;
-	std::cout << "3. display" << std::endl;
-	std::cout << "4. Exit" << std::endl;
+	std::cout << "3." << " Custom Coin Path" << std::endl;
+	std::cout << "4." << " Display" << std::endl;
+	std::cout << "5." << " Exit" << std::endl;
 	std::cout << "==========================" << std::endl;
 }
 
@@ -23,7 +24,7 @@ void displayMenu()
 	// std::cout << "2. Mnemonic" << std::endl;
 	std::cout << "3. Dump Child Secret Key" << std::endl;
 	std::cout << "4. Payment Address" << std::endl;
-	// std::cout << "5. Address Range" << std::endl; 
+	std::cout << "5. Show Child Keys Path" << std::endl; 
 	std::cout << "6. Dump Keys" << std::endl;
 	// std::cout << "7. Check Balance" << std::endl;
 	std::cout << "8. Exit" << std::endl;
@@ -91,7 +92,7 @@ Prefixes matchPrefixTicker(std::string coin)
 int main(){
 	HD_Wallet wallet;
 	int choice = 0;
-	while(choice != 4)
+	while(choice != 5)
 	{
 		mainMenu();
 		choice = getInput();
@@ -117,6 +118,11 @@ int main(){
 			}
 
 		} else if (choice == 3)
+		{
+			int pathIndex = getInput();
+			wallet.setCoin(pathIndex);
+			//printpath
+		} else if (choice == 4)
 		{	
 			while(choice != 8){
 				displayMenu();
@@ -140,12 +146,11 @@ int main(){
 				{
 					index = getInput();
 					wallet.displayChildAddress(index);
-				// } else if (choice == 5)
-				// {
-				// 	int start = getInput();
-				// 	int end = getInput();
-				// 	wallet.addressRange(start, end);
-				// 
+				} else if (choice == 5)
+				{
+					std::cout << "Master Key / Purpose Code / Coin Code / Account / Change(T/F) / Child Index" << std::endl;
+					std::cout << "Master / 44 / " << wallet.getCoinPrefixes().bip44_code << " / " << wallet.getCurrentAccount() << " / 0 / Child Index" << std::endl;
+				
 				} else if (choice == 6)
 				{
 					wallet.dumpKeys();
@@ -162,10 +167,10 @@ int main(){
 					std::cout << "Selection Invalid! " << std::endl;
 				}
 			}
-		} else if (choice == 4)
+		} else if (choice == 5)
 		{
-			std::cout << "Goodbye" << std::endl;
-		}else {
+			std::cout << "Good Bye!" << std::endl;
+		} else {
 			std::cout << "Selection Invalid!" << std::endl;
 		}
 	}

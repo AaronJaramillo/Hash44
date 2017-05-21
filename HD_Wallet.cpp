@@ -96,6 +96,7 @@ public:
 	}
 	void set_account(int account_num)
 	{
+		currentAccount = account_num;
 		account = coin.derive_private(account_num);
 	}
 	//display output
@@ -224,11 +225,16 @@ public:
 	Prefixes getCoinPrefixes(){
 		return coin_type;
 	}
+	int getCurrentAccount()
+	{
+		return currentAccount;
+	}
 private:
 	//members
 	data_chunk entropy;
 	data_chunk seed;
 	Prefixes coin_type;
+	int currentAccount;
 	wallet::word_list mnemonic;
 	wallet::hd_private purpose44Key;
 	wallet::hd_private coin;
