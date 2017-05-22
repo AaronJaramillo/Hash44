@@ -148,6 +148,10 @@ public:
 	{
 		std::cout << "\nAddress: " << childAddress(index).encoded() << std::endl;
 	}
+	std::string getChildKeyPath()
+	{
+		return "Master / 44 / " + std::to_string(getCoinPrefixes().bip44_code) + " / " + std::to_string(getCurrentAccount()) + " / 0 / Child Index";
+	}
 	void addressRange(int start, int end)
 	{
 		while(start != end)

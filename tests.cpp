@@ -17,9 +17,11 @@ $ bx mnemonic-to-seed label stick flat innocent brother frost rebel aim creek si
 #define CHILD_ADDRESS_69 "18qpGdAu62zHuXADcWuCt1HxexRYJFtjmB"
 #define CHILD_SECRET_0 "1815f322a90ec9182594e59826bb7b401d943254421c953ad191003aa588c12f"
 #define CHILD_PUBLIC_0 "03c42698734344a32e41807ee3ca5093644922fbbf17c8016665a4c6cfb39643e5"
-
+#define CHILD_KEY_PATH "Master / 44 / 0 / 0 / 0 / Child Index"
+#define COIN256_ACCOUNT256_CHILD_KEY_PATH "Master / 44 / 256 / 256 / 0 / Child Index"
 #define COIN256_CHILD_ADDRESS_0 "16HAUSw9YhTXu1YPc1RNBeWo64SDc77WHu"
 #define ACCOUNT256_CHILD_ADDRESS_0 "1q6Z5ZpsFaqV8VE6LbwKP9uqfPoKQGUQv"
+
 
 
 const Prefixes coin = {256, 0x0488ADE4, 0x0488B21E, 0x00, 0x05};
@@ -110,10 +112,33 @@ BOOST_AUTO_TEST_CASE(hd_wallet_child_address)
 	BOOST_REQUIRE_EQUAL(wallet.childAddress(69).encoded(), CHILD_ADDRESS_69);
 
 }
+BOOST_AUTO_TEST_CASE(hd_wallet_get_coin_prefixes)
+{
+	HD_Wallet wallet(MNEMONIC_SEED, coin);
+	BOOST_REQUIRE_EQUAL(wallet.getCoinPrefixes().bip44_code, coin.bip44_code);
+	BOOST_REQUIRE_EQUAL(wallet.getCoinPrefixes().HDprivate, coin.HDprivate);
+	BOOST_REQUIRE_EQUAL(wallet.getCoinPrefixes().P2KH, coin.P2KH);
+	BOOST_REQUIRE_EQUAL(wallet.childAddress(0).encoded(), COIN256_CHILD_ADDRESS_0);
+}
+BOOST_AUTO_TEST_CASE(hd_wallet_get_account)
+{
+	HD_Wallet wallet(MNEMONIC_SEED);
+	wallet.set_account(256);
+	BOOST_REQUIRE_EQUAL(wallet.getCurrentAccount(), 256);
+	BOOST_REQUIRE_EQUAL(wallet.childAddress(0).encoded(), ACCOUNT256_CHILD_ADDRESS_0);
+
+}
+BOOST_AUTO_TEST_CASE(hd_wallet_get_key_path)
+{
+	HD_Wallet wallet(MNEMONIC_SEED);
+	wallet.getChildKeyPath();
+	BOOST_REQUIRE_EQUAL(wallet.getChildKeyPath(), CHILD_KEY_PATH);
+	wallet.setCoin(256);
+	wallet.set_account(256);
+	BOOST_REQUIRE_EQUAL(wallet.getChildKeyPath(), COIN256_ACCOUNT256_CHILD_KEY_PATH);
 
 
-
-
+}
 
 
 
