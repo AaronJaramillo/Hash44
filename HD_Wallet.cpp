@@ -33,7 +33,7 @@ public:
 	//constructor
 	HD_Wallet()
 	{
-		entropy = data_chunk(16);
+		data_chunk entropy = data_chunk(16);
 		pseudo_random_fill(entropy);
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
@@ -42,7 +42,7 @@ public:
 	}
 	HD_Wallet(Prefixes coin_code)
 	{
-		entropy = data_chunk(16);
+		data_chunk entropy = data_chunk(16);
 		pseudo_random_fill(entropy);
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
@@ -51,29 +51,33 @@ public:
 
 	}
 
-	HD_Wallet(const data_chunk Userentropy)
+	HD_Wallet(const data_chunk userSeed)
 	{
-		entropy = Userentropy;
-		mnemonic = wallet::create_mnemonic(entropy);
-		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
+		//defaults to BTC
+		seed = userSeed;
+		//mnemonic = wallet::create_mnemonic(entropy);
+		//seed = entropy; //to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		setCoinPrefixes(BTC);
 	}
 
-	HD_Wallet(const data_chunk Userentropy, Prefixes coin_code)
+	HD_Wallet(const data_chunk userSeed, Prefixes coin_code)
 	{
-		entropy = Userentropy;
-		mnemonic = wallet::create_mnemonic(entropy);
-		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
+		seed = userSeed;
+		//mnemonic = wallet::create_mnemonic(entropy);
+		//seed = entropy; //to_chunk(wallet::decode_mnemonic(mnemonic));
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
 		setCoinPrefixes(coin_code);
 	}
 
 	HD_Wallet(const std::string mnemonicSeed)
 	{
+		//defaults to BTC
 		mnemonic = split(mnemonicSeed);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
 		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		setCoinPrefixes(BTC);
 	}
 	HD_Wallet(const std::string mnemonicSeed, Prefixes coin_code)
 	{
@@ -106,8 +110,8 @@ public:
 	{
 		displayMnemonic();
 		displayMasterKey();
-		displayChildSecretKey(1);
-		displayChildAddress(1);
+		displayChildSecretKey(0);
+		displayChildAddress(0);
 
 	}
 	void displayMasterKey()
@@ -227,13 +231,14 @@ public:
 	Prefixes getCoinPrefixes(){
 		return coin_type;
 	}
+
 	int getCurrentAccount()
 	{
 		return currentAccount;
 	}
 private:
 	//members
-	data_chunk entropy;
+	//data_chunk entropy;
 	data_chunk seed;
 	Prefixes coin_type;
 	int currentAccount;
