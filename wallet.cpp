@@ -93,8 +93,38 @@ Prefixes matchPrefixTicker(std::string coin)
 	}
 }
 
-int main(){
-	HD_Wallet wallet;
+int main(int argc, char *argv[]){
+	HD_Wallet wallet = HD_Wallet();
+	if(argc == 3)
+	{
+		for(int i = 0; i < argc; i++)
+		{
+			if(std::string(argv[i]) == "-c")
+			{
+				wallet.setCoinPrefixes(matchPrefixTicker(std::string(argv[i+1])));
+				wallet.dumpKeys();
+				std::cout << std::string(argv[1]) << std::endl;
+			}else if(std::string(argv[i]) == "-m"){
+				wallet = HD_Wallet(std::string(argv[i+1]));
+				wallet.dumpKeys();
+				std::cout << std::string(argv[1]) << std::endl;
+			}
+		}
+	}else if(argc == 5){
+			std::string coinArg;
+			std::string seedArg;
+			if(std::string(argv[1]) == "-c")
+			{
+				coinArg = std::string(argv[2]);
+				seedArg = std::string(argv[4]);
+			}else if(std::string(argv[1]) == "-m"){
+				coinArg = std::string(argv[4]);
+				seedArg = std::string(argv[2]);
+
+			}
+			wallet = HD_Wallet(seedArg, matchPrefixTicker(coinArg));
+			wallet.dumpKeys();
+	}
 	int choice = 0;
 	while(choice != 6)
 	{
@@ -183,9 +213,3 @@ int main(){
 		}
 	}
 }
-
-
-
-
-
-
