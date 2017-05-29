@@ -12,16 +12,22 @@ Depends on Libbitcoin
 github.com/libbitcoin/libbitcoin
 github.com/libbitcoin/libbitcoin-cient (Not really yet)
 
-Compile:
+Make:
 
 ```
-g++ -std=c++11 -o wallet wallet.cpp HD_Wallet.cpp $(pkg-config --cflags libbitcoin --libs libbitcoin libbitcoin-client)
+$ make wallet
 ```
 
-Run:
+Once the executable is made it can be run with:
 
 ```
 ./wallet
+```
+
+or compile on the command line:
+
+```
+g++ -std=c++11 -o wallet wallet.cpp HD_Wallet.cpp $(pkg-config --cflags libbitcoin --libs libbitcoin libbitcoin-client)
 ```
 
 Allows:
