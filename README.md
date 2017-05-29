@@ -1,6 +1,6 @@
 # Hash44
 BIP44 multicoin CLI wallet
-
+ 
 Hash44 is BIP 44 compliant command line keychain utility built with Libbitcoin. Hash44 allows navigating HD child chains to use multiple altcoins, accounts and protocols using different keys derived from the same master wallet.
 
 BIP44 derivation is structured:
@@ -17,31 +17,38 @@ Make:
 ```
 $ make wallet
 ```
-
-Once the executable is made it can be run with:
-
-```
-./wallet
-```
-
 or compile on the command line:
 
 ```
-g++ -std=c++11 -o wallet wallet.cpp HD_Wallet.cpp $(pkg-config --cflags libbitcoin --libs libbitcoin libbitcoin-client)
+$ g++ -std=c++11 -o wallet wallet.cpp HD_Wallet.cpp $(pkg-config --cflags libbitcoin --libs libbitcoin libbitcoin-client)
+```
+Once the executable is made it can be run with:
+
+```
+$ ./wallet 
+$ ./wallet -c LTC -m "brush palace post exhibit kiss process clean snake business possible quiz flight"
+$ ./wallet -c tBTC
+$ ./wallet -m "brush palace post exhibit kiss process clean snake business possible quiz flight"
+```
+
+Takes command line parameter:
+```
+-c        Coin Ticker
+-m        Mnemonic Seed
 ```
 
 Allows:
 
-
-- Generation of a new bip44 wallet master
-- Import mnemonicm master key
-- Use multiple altcoins
-- Use custom coin paths
-- Display child keys and addresses
+- Generation of a new bip44 wallet master.
+- Import mnemonicm master key.
+- Use multiple altcoins.
+- Use custom coin paths.
+- Display child keys and addresses.
 
 To-Do:
 
 
-- Add Balances
-- Implement bip44 Accounts
+- Add Balances.
+- Implement bip44 Accounts.
 - Implement account scanning to automatically recogonize balances. 
+- Cli flag for key-path args.
