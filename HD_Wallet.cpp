@@ -24,11 +24,11 @@ class HD_Wallet
 {
 public:
 	
-	Prefixes BTC =  {0, 0x0488ADE4, 0x0488B21E, 0x00, 0x05};
-	Prefixes tBTC = {1, 0x04358394, 0x043587CF, 0x6f, 0xC4};
-	Prefixes LTC =  {2, 0x0488ADE4, 0x0488B21E, 0x30, 0x32};
-	Prefixes tLTC = {1, 0x04358394, 0x04358394, 0x6f, 0xC0};
-	Prefixes POT =  {81, 0x0488ADE4, 0x0488B21E, 55, 0x05};
+	Prefixes BTC =  {0x80000000, 0x0488ADE4, 0x0488B21E, 0x00, 0x05};
+	Prefixes tBTC = {0x80000001, 0x04358394, 0x043587CF, 0x6f, 0xC4};
+	Prefixes LTC =  {0x80000002, 0x0488ADE4, 0x0488B21E, 0x30, 0x32};
+	Prefixes tLTC = {0x80000001, 0x04358394, 0x04358394, 0x6f, 0xC0};
+	Prefixes POT =  {0x80000081, 0x0488ADE4, 0x0488B21E, 55, 0x05};
 
 	//constructor
 	HD_Wallet()
@@ -37,7 +37,7 @@ public:
 		pseudo_random_fill(entropy);
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
-		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		purpose44Key = wallet::hd_private(seed).derive_private(0x8000002C);
 
 	}
 	HD_Wallet(Prefixes coin_code)
@@ -46,7 +46,7 @@ public:
 		pseudo_random_fill(entropy);
 		mnemonic = wallet::create_mnemonic(entropy);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
-		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		purpose44Key = wallet::hd_private(seed).derive_private(0x8000002C);
 		setCoinPrefixes(coin_code);
 
 	}
@@ -57,7 +57,7 @@ public:
 		seed = userSeed;
 		//mnemonic = wallet::create_mnemonic(entropy);
 		//seed = entropy; //to_chunk(wallet::decode_mnemonic(mnemonic));
-		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		purpose44Key = wallet::hd_private(seed).derive_private(0x8000002C);
 		setCoinPrefixes(BTC);
 	}
 
@@ -66,7 +66,7 @@ public:
 		seed = userSeed;
 		//mnemonic = wallet::create_mnemonic(entropy);
 		//seed = entropy; //to_chunk(wallet::decode_mnemonic(mnemonic));
-		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		purpose44Key = wallet::hd_private(seed).derive_private(0x8000002C);
 		setCoinPrefixes(coin_code);
 	}
 
@@ -76,7 +76,7 @@ public:
 		mnemonic = split(mnemonicSeed);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
-		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		purpose44Key = wallet::hd_private(seed).derive_private(0x8000002C);
 		setCoinPrefixes(BTC);
 	}
 	HD_Wallet(const std::string mnemonicSeed, Prefixes coin_code)
@@ -84,7 +84,7 @@ public:
 		mnemonic = split(mnemonicSeed);
 		seed = to_chunk(wallet::decode_mnemonic(mnemonic));
 		//seed = to_chunk(hashSeed);
-		purpose44Key = wallet::hd_private(seed).derive_private(44);
+		purpose44Key = wallet::hd_private(seed).derive_private(0x8000002C);
 		setCoinPrefixes(coin_code);
 	}
 	void setCoin(int bip44coin_code)
@@ -97,7 +97,7 @@ public:
 		coin_type = coin_code;
 		coin = purpose44Key.derive_private(coin_type.bip44_code);
 		//to-do scan accounts
-		set_account(0);
+		set_account(0x80000000);
 
 	}
 	void set_account(int account_num)
@@ -150,7 +150,8 @@ public:
 	}
 	std::string getChildKeyPath()
 	{
-		return "Master / 44 / " + std::to_string(getCoinPrefixes().bip44_code) + " / " + std::to_string(getCurrentAccount()) + " / 0 / Child Index";
+
+		return "Master / 0x8000002C / " + std::to_string(getCoinPrefixes().bip44_code) + " / " + std::to_string(getCurrentAccount()) + " / 0 / Child Index";
 	}
 	void addressRange(int start, int end)
 	{
